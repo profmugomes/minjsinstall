@@ -1,0 +1,112 @@
+' Gambas module file
+
+' Copyright (C) 2025-2026 Murilo Gomes <profmugomes.com.br>
+' SPDX-License-Identifier: GPL-2.0-only
+
+' Site: https://www.profmugomes.com.br
+
+Public Sub Main()
+
+  Dim sEscolha As String
+  Dim sVersion As String
+  Dim sInfo As String
+
+  Env["NVM_DIR"] = User.Home &/ ".config/nvm"
+  
+  Repeat
+    Print "\n=== MiNJSInstall ==="
+    Print "Version: 3.0.0" & gb.NewLine
+    
+    Print "Copyright (C) 2025-2026 Murilo Gomes <profmugomes.com.br>"
+    Print "License: GPL-2.0-only" & gb.NewLine
+    
+    Print "Site: https://www.profmugomes.com.br>"
+    Print "Apoie: https://github.com/sponsors/profmugomes" & gb.NewLine
+    
+    Print "------------------------"
+    
+    Print "Selecione uma opção: "
+    Print "1. Instalar NVM"
+    Print "2. Instalar Node"
+    Print "3. Remover o NVM, NPM e Node"
+    Print "4. Sair"
+    Print "------------------------" & gb.NewLine
+    
+    Line Input sEscolha
+    
+    Select Case sEscolha
+      Case "1"
+        Print "Digite a versão do NVM: "
+        Line Input sVersion
+        
+        Print "Instalando NVM..."
+        Shell Subst("bash -c 'wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v&1/install.sh | bash'", sVersion) Wait To sInfo
+        
+        If Process.LastValue <> 0 Then
+          Print "--------- Erro ---------"
+          Print "Código: " & Process.LastValue
+          Print "Mensagem: " & sInfo
+        Else 
+          Shell "bash -c 'source $NVM_DIR/nvm.sh'" Wait To sInfo
+          
+          Print "NVM instalado e configurado com sucesso!"
+        Endif
+      Case "2"
+        Print "Instalando Node..."
+        Shell "bash -c 'source " & User.Home & "/.config/nvm/nvm.sh && nvm install node'" Wait To sInfo
+        
+        If Process.LastValue <> 0 Then
+          Print "--------- Erro ---------"
+          Print "Código: " & Process.LastValue
+          Print "Mensagem: " & sInfo
+        Else 
+          Print "Node instalado com sucesso!"
+        Endif
+      Case "3"
+        Print "Removendo arquivos..."
+        
+        Dim aLinesToRemove As String[] = [
+          "export NVM_DIR=\"$HOME/.config/nvm\"",
+          "[ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\"  # This loads nvm",
+          "[ -s \"$NVM_DIR/bash_completion\" ] && \\. \"$NVM_DIR/bash_completion\"  # This loads nvm bash_completion"
+        ]
+        Dim aNewLines As New String[]
+        Dim sNewContent As String
+        
+        Dim sContent As String
+        Try sContent = File.Load(User.Home &/ ".bashrc")
+        If Error Then 
+          Print "Erro ao ler .bashrc: " & Error.Text
+          Return
+        Endif
+        
+        For Each sLine As String In Split(sContent, gb.NewLine)
+          If Not aLinesToRemove.Exist(Trim(sLine)) Then
+            aNewLines.Add(sLine)
+          Endif
+        Next
+        
+        sNewContent = aNewLines.Join(gb.NewLine)
+        Try File.Save(User.Home &/ ".bashrc", Trim(sNewContent))
+        If Error Then
+          Print "Erro ao atualizar .bashrc" & Error.Text
+        Endif 
+        
+        Shell Subst("bash -c 'rm -rf &1 &2/.npm &2/.bower'", Env["NVM_DIR"], User.Home) Wait To sInfo
+        
+        If Process.LastValue <> 0 Then
+          Print "--------- Erro ---------"
+          Print "Código: " & Process.LastValue
+          Print "Mensagem: " & sInfo
+        Else 
+          Print "Node removido com sucesso!"
+        Endif
+      Case "4"
+        Break
+      Default
+        Print "\nOpção inválida. Tente novamente."
+    End Select
+    
+  Until False
+
+End

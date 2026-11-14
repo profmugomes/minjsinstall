@@ -1,10 +1,28 @@
 # MiNJSInstall
 
-Instala e Desinstala o NVM e Node com mais facilidade no Linux Debian/Ubuntu.
+Instala e Desinstala o NVM e Node com mais facilidade no Linux Ubuntu.
 
 ## Information
 
-- [Page MiNJSInstall](https://github.com/mugomes/minjsinstall)
+- [Repositório MiNJSInstall](https://github.com/profmugomes/minjsinstall)
+
+## Requerimento do Sistema
+
+### Linux
+
+- Lubuntu 24.04 LTS ou superior
+
+No Lubuntu 24.04 requer o gambas3-gb-gtk3-x11
+
+## 👤 Autor
+
+**Murilo Gomes**
+
+🔗 [https://www.profmugomes.com.br](https://www.profmugomes.com.br)
+
+📺 [https://youtube.com/@profmugomes](https://youtube.com/@profmugomes)
+
+---
 
 ## License
 
